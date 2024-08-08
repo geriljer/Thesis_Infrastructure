@@ -73,5 +73,5 @@ frontend:
     tls:
       - hosts:
           - "alexlevashov.devops-practicum.ru"
-      secretName: k8-secret
+        secretName: k8-secret
   environment: production
