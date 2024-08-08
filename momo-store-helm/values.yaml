@@ -1,0 +1,77 @@
+backend:
+  image: gitlab.praktikum-services.ru:5050/std-026-53/momo-store/momo-backend
+  tag: 1-0-1436576
+  replicas: 1
+  revisionHistoryLimit: 12
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+  javaOpts: "-Xms512m -Xmx1024m"  # Увеличение размера heap памяти
+  livenessProbe:
+    initialDelaySeconds: 15
+    periodSeconds: 30
+    timeoutSeconds: 2
+    failureThreshold: 6
+  imagePullSecrets:
+    - name: docker-config-secret
+  containerPort: 8080
+  service:
+    type: LoadBalancer
+    port: 8080
+    targetPort: 8080
+  vpa:
+    enabled: true
+    updateMode: "Off"
+    minAllowed:
+      cpu: 0m
+      memory: 0Mi
+    maxAllowed:
+      cpu: 1
+      memory: 500Mi
+    controlledResources: ["cpu", "memory"]
+    controlledValues: RequestsAndLimits
+  rollingUpdateStrategy:
+    maxUnavailable: 2
+    maxSurge: 20%
+  environment: production
+
+frontend:
+  image: gitlab.praktikum-services.ru:5050/std-026-53/momo-store/momo-frontend
+  tag: 1-0-1436679
+  replicas: 1
+  revisionHistoryLimit: 12
+  imagePullSecrets:
+    - name: docker-config-secret
+  containerPort: 8080
+  service:
+    type: ClusterIP
+    port: 80
+  nginxConf: |
+    server {
+      listen 80;
+
+      root /app/momo-store;
+      index index.html;
+
+      location /momo-store/ {
+          alias /app/momo-store/; ##судя по всему фронт без этого алиаса отказывался работать
+          try_files $uri $uri/ /momo-store/index.html;
+      }
+      location /api {
+        proxy_pass http://backend:8080;
+      }
+    }
+  ingress:
+    enabled: true
+    className: "nginx"
+    hosts:
+      - host: "alexlevashov.devops-practicum.ru"
+    tls:
+      - hosts:
+          - "alexlevashov.devops-practicum.ru"
+      secretName: k8-secret
+  environment: production
