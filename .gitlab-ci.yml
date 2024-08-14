@@ -1,27 +1,17 @@
 deploy-helm:
   stage: deploy
-    #image: alpine/helm:3.9.4
-  image: vault:1.11.3
+  image: alpine/helm:3.9.4
+    #image: vault:1.11.3
   before_script:
-    # Установка Docker вручную в Alpine Linux
-    - apk add --no-cache curl tar bash openrc
-    - apk add --no-cache docker
-    # Запуск Docker
-    - rc-update add docker boot
-    - service docker start & 
-    - sleep 5
-    - docker info
-    # Установка Helm
-    - apk add --no-cache curl
-    #- curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-    # Загрузка и установка Helm без использования bash
-    - curl -sLO https://get.helm.sh/helm-v3.9.4-linux-amd64.tar.gz
-    - tar -zxvf helm-v3.9.4-linux-amd64.tar.gz
-    - mv linux-amd64/helm /usr/local/bin/helm
-    - rm -rf linux-amd64 helm-v3.9.4-linux-amd64.tar.gz
+    #install helm
+    #- apk add --no-cache curl
+    #- curl -sLO https://get.helm.sh/helm-v3.9.4-linux-amd64.tar.gz
+    #- tar -zxvf helm-v3.9.4-linux-amd64.tar.gz
+    #- mv linux-amd64/helm /usr/local/bin/helm
+    #- rm -rf linux-amd64 helm-v3.9.4-linux-amd64.tar.gz
       # Установка репозитория Helm из Nexus
-    - helm repo add my-repo ${HELM_REPO} --username ${NEXUS_USER} --password ${NEXUS_PASS}
-    - helm repo update
+      #- helm repo add my-repo ${HELM_REPO} --username ${NEXUS_USER} --password ${NEXUS_PASS}
+      #- helm repo update
     # Kubectl install
     - apk update && apk add --no-cache curl
     - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
@@ -32,21 +22,11 @@ deploy-helm:
     - kubectl config use-context momo-store-context
     # Убедитесь, что Helm может взаимодействовать с кластером
     - helm repo update
-     # Install Vault CLI
-     #- curl -sLo vault.zip https://releases.hashicorp.com/vault/1.14.0/vault_1.14.0_linux_amd64.zip
-     #- wget https://releases.hashicorp.com/vault/1.17.3/vault_1.17.3_linux_amd64.zip -O vault.zip
-     #- unzip vault.zip
-     #- mv vault /usr/local/bin/
-     #- rm vault.zip
-     #- wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
-     #- echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
-     #- sudo apt update && sudo apt install vault
-    - export VAULT_ADDR=${VAULT_ADDR}
-    - export DOCKER_VAULT="docker exec -it vault vault"
-    - $DOCKER_VAULT login $VAULT_TOKEN
-    - $DOCKER_VAULT status
-    - DOCKER_CONFIG_JSON=$($DOCKER_VAULT kv get -field=docker-config-json docker-config-json/docker-config-json)
   script:
+    #- export VAULT_ADDR=${VAULT_ADDR}
+    #- $DOCKER_VAULT login $VAULT_TOKEN
+    #- $DOCKER_VAULT status
+    #- DOCKER_CONFIG_JSON=$($DOCKER_VAULT kv get -field=docker-config-json docker-config-json/docker-config-json)
     # Обновление или установка чарта с использованием Helm и передача переменной $VERSION
     - kubectl create secret generic docker-config-secret --from-literal=.dockerconfigjson="$DOCKER_CONFIG_JSON" --type=kubernetes.io/dockerconfigjson --namespace default
     - helm upgrade --install momo-store-chart my-repo/momo-store --atomic --namespace default
