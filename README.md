@@ -76,12 +76,6 @@ Name	Last Modified	Size	Description
 Parent Directory
 0.0.1
 0.1.0
-```
-cd existing_repo
-git remote add origin https://gitlab.praktikum-services.ru/std-026-53/momo-infrastructure.git
-git branch -M main
-git push -uf origin main
-```
 
 ## Deploy
 Pipeline to deploy application in Kubernetes via manifests:
