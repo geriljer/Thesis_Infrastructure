@@ -12,6 +12,10 @@ metadata:
     app.kubernetes.io/component: frontend
     app.kubernetes.io/part-of: momo-store
     env: "{{ .Values.environment }}"
+  annotations:
+    {{- range $key, $value := .Values.ingress.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
 spec:
   ingressClassName: {{ .Values.ingress.className | quote }}
   {{- if .Values.ingress.tls }}
@@ -35,6 +39,36 @@ spec:
               service:
                 name: frontend
                 port:
-                  number: {{ $.Values.containerPort }}
+                  number: {{ $.Values.frontend.containerPort }}
+    {{- end }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: backend
+  labels:
+    app.kubernetes.io/name: momo-backend
+    app.kubernetes.io/instance: "{{ .Release.Name }}"
+    app.kubernetes.io/version: "{{ .Chart.AppVersion }}"
+    app.kubernetes.io/managed-by: "{{ .Release.Service }}"
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/part-of: momo-store
+    env: "{{ .Values.environment }}"
+spec:
+  ingressClassName: {{ .Values.ingress.className | quote }}
+  rules:
+    {{- range .Values.ingress.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: {{ $.Values.backend.containerPort }}
     {{- end }}
 {{- end }}
+
