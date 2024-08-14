@@ -20,6 +20,6 @@ deploy-helm:
     - rm ~/.kube/config
   environment:
     name: production
-    url: http://momo-store.practicum.services.ru:80
+    url: http://momo-store.devops-practicum.ru:80
   rules:
     - when: manual
