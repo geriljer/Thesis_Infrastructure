@@ -1,0 +1,15 @@
+deploy-helm:
+  stage: deploy
+  image: alpine/helm:3.9.4
+  before_script:
+    # Установка репозитория Helm из Nexus
+    - helm repo add my-repo ${HELM_REPO}
+    - helm repo update
+  script:
+    # Обновление или установка чарта с использованием Helm и передача переменной $VERSION
+    - helm upgrade --install momo-store-chart my-repo/momo-store --atomic
+  environment:
+    name: production
+    url: http://momo-store.practicum.services.ru:80
+  rules:
+    - when: manual
