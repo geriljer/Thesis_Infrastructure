@@ -1,6 +1,7 @@
 deploy-helm:
   stage: deploy
-  image: alpine/helm:3.9.4
+    #image: alpine/helm:3.9.4
+  image: vault:1.11.3
   before_script:
     # Установка репозитория Helm из Nexus
     - helm repo add my-repo ${HELM_REPO} --username ${NEXUS_USER} --password ${NEXUS_PASS}
@@ -20,12 +21,12 @@ deploy-helm:
      #- unzip vault.zip
      #- mv vault /usr/local/bin/
      #- rm vault.zip
-    - wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
-    - echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
-    - sudo apt update && sudo apt install vault
+     #- wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+     #- echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+     #- sudo apt update && sudo apt install vault
     - export VAULT_ADDR=${VAULT_ADDR}
     - export DOCKER_VAULT="sudo docker exec -it vault vault"
-    - $DOCKER_VAULT login $VAULT_TOKEN -tls-skip-verify
+    - $DOCKER_VAULT login $VAULT_TOKEN
     - $DOCKER_VAULT status
     - DOCKER_CONFIG_JSON=$($DOCKER_VAULT kv get -field=docker-config-json docker-config-json/docker-config-json)
   script:
