@@ -23,13 +23,7 @@ deploy-helm:
     # Убедитесь, что Helm может взаимодействовать с кластером
     - helm repo update
   script:
-    #- export VAULT_ADDR=${VAULT_ADDR}
-    #- $DOCKER_VAULT login $VAULT_TOKEN
-    #- $DOCKER_VAULT status
-    #- DOCKER_CONFIG_JSON=$($DOCKER_VAULT kv get -field=docker-config-json docker-config-json/docker-config-json)
-    # Обновление или установка чарта с использованием Helm и передача переменной $VERSION
-    - kubectl create secret generic docker-config-secret --from-literal=.dockerconfigjson="$DOCKER_CONFIG_JSON" --type=kubernetes.io/dockerconfigjson --namespace default
-    - helm upgrade --install momo-store-chart my-repo/momo-store --atomic --namespace default
+    - helm upgrade --install momo-store-chart my-repo/momo-store --atomic --namespace default --set dockerConfigJson="$DOCKER_CONFIG_JSON"
   after_script:
     - rm ~/.kube/config
   environment:
