@@ -5,8 +5,13 @@ deploy-helm:
   before_script:
     # Установка Helm
     - apk add --no-cache curl
-    - curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-    # Установка репозитория Helm из Nexus
+    #- curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+    # Загрузка и установка Helm без использования bash
+    - curl -sLO https://get.helm.sh/helm-v3.9.4-linux-amd64.tar.gz
+    - tar -zxvf helm-v3.9.4-linux-amd64.tar.gz
+    - mv linux-amd64/helm /usr/local/bin/helm
+    - rm -rf linux-amd64 helm-v3.9.4-linux-amd64.tar.gz
+      # Установка репозитория Helm из Nexus
     - helm repo add my-repo ${HELM_REPO} --username ${NEXUS_USER} --password ${NEXUS_PASS}
     - helm repo update
     # Kubectl install
