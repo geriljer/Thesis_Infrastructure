@@ -15,7 +15,8 @@ deploy-helm:
     # Убедитесь, что Helm может взаимодействовать с кластером
     - helm repo update
      # Install Vault CLI
-    - curl -sLo vault.zip https://releases.hashicorp.com/vault/1.14.0/vault_1.14.0_linux_amd64.zip
+     #- curl -sLo vault.zip https://releases.hashicorp.com/vault/1.14.0/vault_1.14.0_linux_amd64.zip
+    - wget https://releases.hashicorp.com/vault/1.14.0/vault_1.14.0_linux_amd64.zip -O vault.zip
     - unzip vault.zip
     - mv vault /usr/local/bin/
     - rm vault.zip
