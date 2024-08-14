@@ -8,8 +8,8 @@ deploy-helm:
     - apk add --no-cache docker
     # Запуск Docker
     - rc-update add docker boot
-    - systemctl start docker
-    - systemctl is-active docker
+    - service docker start & 
+    - sleep 5
     - docker info
     # Установка Helm
     - apk add --no-cache curl
