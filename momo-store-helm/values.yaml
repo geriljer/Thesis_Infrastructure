@@ -38,6 +38,7 @@ backend:
     maxUnavailable: 2
     maxSurge: 20%
   environment: production
+  dockerconfigjson: "{{ .dockerconfigjson }}"
 
 frontend:
   image: gitlab.praktikum-services.ru:5050/std-026-53/momo-store/momo-frontend
@@ -84,3 +85,4 @@ frontend:
   backend:
     containerPort: 8081
   environment: production
+  dockerconfigjson: "{{ .dockerconfigjson }}"
