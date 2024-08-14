@@ -9,9 +9,9 @@ deploy-helm:
     #- tar -zxvf helm-v3.9.4-linux-amd64.tar.gz
     #- mv linux-amd64/helm /usr/local/bin/helm
     #- rm -rf linux-amd64 helm-v3.9.4-linux-amd64.tar.gz
-      # Установка репозитория Helm из Nexus
-      #- helm repo add my-repo ${HELM_REPO} --username ${NEXUS_USER} --password ${NEXUS_PASS}
-      #- helm repo update
+     Установка репозитория Helm из Nexus
+    - helm repo add my-repo ${HELM_REPO} --username ${NEXUS_USER} --password ${NEXUS_PASS}
+    - helm repo update
     # Kubectl install
     - apk update && apk add --no-cache curl
     - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
