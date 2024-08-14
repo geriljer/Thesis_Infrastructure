@@ -3,11 +3,10 @@ deploy-helm:
     #image: alpine/helm:3.9.4
   image: vault:1.11.3
   before_script:
-    #Установка пакетов для docker
+    # Установка Docker вручную в Alpine Linux
     - apk add --no-cache curl tar bash openrc
-    - curl -fsSL https://get.docker.com -o get-docker.sh
-    - sh get-docker.sh
-    - rm get-docker.sh
+    - apk add --no-cache docker
+    # Запуск Docker
     - rc-update add docker boot
     - service docker start
     # Установка Helm
