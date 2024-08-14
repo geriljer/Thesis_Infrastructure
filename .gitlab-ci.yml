@@ -3,7 +3,7 @@ deploy-helm:
   image: alpine/helm:3.9.4
   before_script:
     # Установка репозитория Helm из Nexus
-    - helm repo add my-repo ${HELM_REPO}
+    - helm repo add my-repo ${HELM_REPO} --username ${NEXUS_USER} --password ${NEXUS_PASS}
     - helm repo update
   script:
     # Обновление или установка чарта с использованием Helm и передача переменной $VERSION
