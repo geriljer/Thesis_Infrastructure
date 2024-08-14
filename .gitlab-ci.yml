@@ -9,7 +9,7 @@ deploy-helm:
     #- tar -zxvf helm-v3.9.4-linux-amd64.tar.gz
     #- mv linux-amd64/helm /usr/local/bin/helm
     #- rm -rf linux-amd64 helm-v3.9.4-linux-amd64.tar.gz
-     Установка репозитория Helm из Nexus
+    # Установка репозитория Helm из Nexus
     - helm repo add my-repo ${HELM_REPO} --username ${NEXUS_USER} --password ${NEXUS_PASS}
     - helm repo update
     # Kubectl install
