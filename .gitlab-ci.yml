@@ -23,8 +23,8 @@ deploy-helm:
     # Убедитесь, что Helm может взаимодействовать с кластером
     - helm repo update
   script:
-    - echo "$DOCKER_CONFIG_JSON" > dockerconfigjson.txt
-    - helm upgrade --install momo-store-chart my-repo/momo-store --atomic --namespace default --set-file dockerconfigjson=dockerconfigjson.txt
+    - export DOCKER_CONFIG_JSON=${DOCKER_CONFIG_JSON}
+    - helm upgrade --install momo-store-chart my-repo/momo-store --atomic --namespace default --set dockerconfigjson=${DOCKER_CONFIG_JSON}
   after_script:
     - rm ~/.kube/config
   environment:
