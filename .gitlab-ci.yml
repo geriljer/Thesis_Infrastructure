@@ -21,10 +21,6 @@ deploy-helm:
     - chmod 600 ~/.kube/config
     - kubectl config use-context momo-store-context
     # Убедитесь, что Helm может взаимодействовать с кластером
-    - mkdir -p ~/.docker
-    - echo "$DOCKER_CONFIG_JSON" | base64 -d >> ~/.docker/config.json
-    - cat ~/.docker/config.json
-    - chmod 600 ~/.docker/config.json
     - helm repo update
   script:
     #- export DOCKER_CONFIG_JSON=ewoJImF1dGhzIjogewoJCSJnaXRsYWIucHJha3Rpa3VtLXNlcnZpY2VzLnJ1OjUwNTAiOiB7CgkJCSJhdXRoIjogImMzUmtMVEF5TmkwMU16cGtOblpQTkd3NVRnPT0iCgkJfQoJfQp9
