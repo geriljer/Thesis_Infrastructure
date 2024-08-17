@@ -25,6 +25,7 @@ deploy-helm:
   script:
     #- export DOCKER_CONFIG_JSON=ewoJImF1dGhzIjogewoJCSJnaXRsYWIucHJha3Rpa3VtLXNlcnZpY2VzLnJ1OjUwNTAiOiB7CgkJCSJhdXRoIjogImMzUmtMVEF5TmkwMU16cGtOblpQTkd3NVRnPT0iCgkJfQoJfQp9
     #- helm upgrade --install momo-store-chart my-repo/momo-store --atomic --namespace default --set  dockerconfigjson="$(echo $DOCKER_CONFIG_JSON | base64 -d | base64 -w 0)"
+    - kubectl delete secret docker-config-secret --namespace default
     - kubectl create secret generic docker-config-secret --namespace default  --from-literal=.dockerconfigjson="$DOCKER_CONFIG_JSON" --type=kubernetes.io/dockerconfigjson
     - helm upgrade --install momo-store-chart my-repo/momo-store --atomic --namespace default
   after_script:
