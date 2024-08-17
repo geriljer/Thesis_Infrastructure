@@ -28,7 +28,7 @@ deploy-helm:
     - helm repo update
   script:
     #- export DOCKER_CONFIG_JSON=ewoJImF1dGhzIjogewoJCSJnaXRsYWIucHJha3Rpa3VtLXNlcnZpY2VzLnJ1OjUwNTAiOiB7CgkJCSJhdXRoIjogImMzUmtMVEF5TmkwMU16cGtOblpQTkd3NVRnPT0iCgkJfQoJfQp9
-    - helm upgrade --install momo-store-chart my-repo/momo-store --atomic --namespace default --set-file  dockerconfigjson=~/.docker/config.json
+    - helm upgrade --install momo-store-chart my-repo/momo-store --atomic --namespace default --set-file  dockerconfigjson=$(echo $HOME)HOME.docker/config.json
   after_script:
     - rm ~/.kube/config
   environment:
