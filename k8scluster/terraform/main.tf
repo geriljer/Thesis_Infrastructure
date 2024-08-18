@@ -7,11 +7,34 @@ terraform {
   required_version = ">= 0.92.0"
 }
 
+provider "vault" {
+  address = var.vault_host
+  skip_tls_verify = true
+  token = var.VAULT_TOKEN
+}
+# Fetch the Vault token stored within Vault
+data "vault_generic_secret" "vault_token" {
+  path = "secret/vault-token"
+}
+
+# Use the retrieved Vault token to reconfigure the Vault provider. alias is used to avoid an error message related to duplicate provider vault
+provider "vault" {
+  alias = "with_fetched_token"
+  address = var.vault_host
+  skip_tls_verify = true
+  token   = data.vault_generic_secret.vault_token.data["vault_token"]
+}
+
+# Fetch the Yandex Cloud token from Vault
+data "vault_generic_secret" "yc_token" {
+  path = "secret/yandex-cloud-token"
+}
+
 provider "yandex" {
- token     = "t1.9euelZrLkI6Lj5yQipzOlY-aj5TLme3rnpWakcibjpaPns2dmc-PjceQysrl8_dHB3ZK-e9CPAVc_d3z9wc2c0r570I8BVz9zef1656VmozJjc6djpPIlMmdkJKayZeW7_zN5_XrnpWazc_LlpuJkpCNlsuTmJXImovv_cXrnpWajMmNzp2Ok8iUyZ2QkprJl5Y.VJNQinK_feWmhh-SzIcP7p2TY5USGUqi25Fz5i5IqD5MfJPCCpaUgyyr_jUwtuhE88-TakmjuPyPaZ9BjibkAQ"
- cloud_id  = "b1gqkugmt2d5nr2n85l9"
- folder_id = "b1g3acl1dihgarklvhm3"
- zone      = "ru-central1-a"
+ token     = data.vault_generic_secret.yc_token.data["yc_token"]
+ cloud_id  = var.cloud_id
+ folder_id = var.folder_id
+ zone      = var.zone
 }
 
 locals {
