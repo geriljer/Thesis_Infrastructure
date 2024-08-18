@@ -1,0 +1,38 @@
+deploy-helm:
+  stage: deploy
+  image: alpine/helm:3.9.4
+    #image: vault:1.11.3
+  before_script:
+    #install helm
+    #- apk add --no-cache curl
+    #- curl -sLO https://get.helm.sh/helm-v3.9.4-linux-amd64.tar.gz
+    #- tar -zxvf helm-v3.9.4-linux-amd64.tar.gz
+    #- mv linux-amd64/helm /usr/local/bin/helm
+    #- rm -rf linux-amd64 helm-v3.9.4-linux-amd64.tar.gz
+    # Установка репозитория Helm из Nexus
+    - helm repo add my-repo ${HELM_REPO} --username ${NEXUS_USER} --password ${NEXUS_PASS}
+    - helm repo update
+    # Kubectl install
+    - apk update && apk add --no-cache curl
+    - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    - install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+    - mkdir -p ~/.kube
+    - echo "$KUBECONFIG_BASE64" | base64 -d >> ~/.kube/config
+    - chmod 600 ~/.kube/config
+    - kubectl config use-context momo-store-context
+    # Убедитесь, что Helm может взаимодействовать с кластером
+    - helm repo update
+  script:
+    #- export DOCKER_CONFIG_JSON=ewoJImF1dGhzIjogewoJCSJnaXRsYWIucHJha3Rpa3VtLXNlcnZpY2VzLnJ1OjUwNTAiOiB7CgkJCSJhdXRoIjogImMzUmtMVEF5TmkwMU16cGtOblpQTkd3NVRnPT0iCgkJfQoJfQp9
+    #- helm upgrade --install momo-store-chart my-repo/momo-store --atomic --namespace default --set  dockerconfigjson="$(echo $DOCKER_CONFIG_JSON | base64 -d | base64 -w 0)"
+    - kubectl delete secret docker-config-secret --namespace default
+    - kubectl create secret generic docker-config-secret --namespace default  --from-literal=.dockerconfigjson="$DOCKER_CONFIG_JSON" --type=kubernetes.io/dockerconfigjson
+    - helm upgrade --install momo-store-chart my-repo/momo-store --atomic --namespace default
+  after_script:
+    - rm ~/.kube/config
+  environment:
+    name: production
+    url: http://momo-store.devops-practicum.ru:80
+    auto_stop_in: 1h
+  rules:
+    - when: manual

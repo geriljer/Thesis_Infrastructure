@@ -1,0 +1,89 @@
+backend:
+  image: gitlab.praktikum-services.ru:5050/std-026-53/momo-store/momo-backend
+  tag: 1-0-1439318
+  replicas: 1
+  revisionHistoryLimit: 12
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+  javaOpts: "-Xms512m -Xmx1024m"  # Увеличение размера heap памяти
+  livenessProbe:
+    initialDelaySeconds: 15
+    periodSeconds: 30
+    timeoutSeconds: 2
+    failureThreshold: 6
+  imagePullSecrets:
+    - name: docker-config-secret
+  containerPort: 8081
+  service:
+    type: ClusterIP
+    port: 8081
+    targetPort: 8081
+  vpa:
+    enabled: true
+    updateMode: "Off"
+    minAllowed:
+      cpu: 0m
+      memory: 0Mi
+    maxAllowed:
+      cpu: 1
+      memory: 500Mi
+    controlledResources: ["cpu", "memory"]
+    controlledValues: RequestsAndLimits
+  rollingUpdateStrategy:
+    maxUnavailable: 2
+    maxSurge: 20%
+  environment: production
+    #dockerconfigjson: "{{ .dockerconfigjson }}"
+  dockerconfigjson: ewoJImF1dGhzIjogewoJCSJnaXRsYWIucHJha3Rpa3VtLXNlcnZpY2VzLnJ1OjUwNTAiOiB7CgkJCSJhdXRoIjogImMzUmtMVEF5TmkwMU16cGtOblpQTkd3NVRnPT0iCgkJfQoJfQp9Cgo=
+
+frontend:
+  image: gitlab.praktikum-services.ru:5050/std-026-53/momo-store/momo-frontend
+  tag: 1-0-1441896
+  replicas: 1
+  revisionHistoryLimit: 12
+  imagePullSecrets:
+    - name: docker-config-secret
+  containerPort: 80
+  service:
+    type: ClusterIP
+    port: 80
+  nginxConf: |
+    server {
+      listen 80;
+
+      root /app/momo-store;
+      index index.html;
+
+      location /momo-store/ {
+          alias /app/momo-store/; ##судя по всему фронт без этого алиаса отказывался работать
+          try_files $uri $uri/ /momo-store/index.html;
+      }
+      location /api/ {
+        proxy_pass http://backend:8081/api;
+      }
+    }
+  ingress:
+    enabled: true
+    className: "nginx"
+    annotations:
+      nginx.ingress.kubernetes.io/ssl-redirect: "false"
+      nginx.ingress.kubernetes.io/rewrite-target: /
+      nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
+      cert-manager.io/cluster-issuer: "yc-clusterissuer"
+    hosts:
+      - host: "momo-store.devops-practicum.ru"
+    tls:
+      - hosts:
+          - "momo-store.devops-practicum.ru"
+        secretName: momo-tls-secret
+  frontend:  
+    containerPort: 80
+  backend:
+    containerPort: 8081
+  environment: production
+  dockerconfigjson: "{{ .dockerconfigjson }}"
