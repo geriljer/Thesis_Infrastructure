@@ -1,5 +1,8 @@
 # Momo-infrastructure
+
 ## Repo contains:
+
+----------------------------------
 1) steps to deploy hosted k8s cluster.
 
 ├── ansible
@@ -64,8 +67,10 @@
 
     └── variables.tf
 
-2) pictures uploaded to S3 Object Storage in YC
+---------------------------------------
+2) pictures are uploaded to S3 Object Storage in YC and are synchronized with local S3 repo on Minio (deployed on a dedicated Ubuntu VM)
 
+---------------------------------------
 3) steps to deploy application in kubernetes cluster
 
 ├── backend
@@ -92,6 +97,7 @@
 
 │   └── service.yml
 
+---------------------------------------
 4) helm chart to deploy application in k8s cluster via helm
 
 ├── charts
@@ -132,12 +138,19 @@
 
 └── values.yaml
 
+------------------------------------
 Charts are stored in Nexus repo: http://nexus.praktikum-services.tech/repository/alexlevashov-helm-026/
+
 Index of /momo-store
+
 Name	Last Modified	Size	Description
+
 Parent Directory
+
 0.0.1
+
 0.1.0
+
 0.1.1
 
 ## Deploy
@@ -287,10 +300,14 @@ deploy-helm:
     - when: manual
 
 ## Project status
+
 Project completed. Application is successfully deployed via Helm chart via CICD pipeline.
 
 -------------------------
 cd existing_repo
+
 git remote add origin https://gitlab.praktikum-services.ru/std-026-53/momo-infrastructure.git
+
 git branch -M main
+
 git push -uf origin main
