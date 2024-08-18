@@ -2,19 +2,19 @@ variable "new_user" {
   type    = string
   default = "meta.txt"
 }
+#set the value as environment variable: export VAULT_TOKEN=value
 variable "VAULT_TOKEN" {
   type        = string
   description = "Vault token for accessing secrets"
   default     = ""
+
+#set the value as environment variable: export vault_host=<IP:8200>
 }
 variable "vault_host" {
   type        = string
   description = "Vault host"
   default     = ""
 }
-# cloud_id  = "b1gqkugmt2d5nr2n85l9"
-# folder_id = "b1g3acl1dihgarklvhm3"
-# zone      = "ru-central1-a"
 
 variable "cloud_id" {
   type        = string
