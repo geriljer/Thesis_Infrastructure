@@ -19,17 +19,17 @@ variable "vault_host" {
 variable "cloud_id" {
   type        = string
   description = "YC id"
-  default     = "b1gqkugmt2d5nr2n85l9"
+  default     = ""
  }
 
  variable "folder_id" {
   type        = string
   description = "YC folder id"
-  default     = "b1g3acl1dihgarklvhm3"
+  default     = ""
  }
 
  variable "zone" {
   type        = string
   description = "YC zone"
-  default     = "ru-central1-a"
+  default     = ""
  }

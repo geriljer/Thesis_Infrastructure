@@ -1,11 +1,11 @@
 #cloud-config
 users:
  - default
- - name: student
+ - name: <>
    groups: sudo
-   password: test
+   password: <>
    shell: /bin/bash
    sudo: ['ALL=(ALL) NOPASSWD:ALL']
    ssh-authorized-keys:
-        - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCgXAAtH51GvFPQu3wXkzXoFlb+M2Wka7of5MxPTJKu/xlSL4bgnb7vP0dUSd/og4WumfzOR1gVJ3tdmcDvcFD52kpol+vp01TkS8IYgAVt7i3aWQqGG0U4+2ie0WZMVW/uMIOQOSnvoFIRDpfDs/4dmjc2EoeHSHuPdND9rnNq0vgJKk91Md3TZ3Aqc67tMvXy1JPnxGqGUB+NgIfq7JAEJdLACLBajk2hBLlUdHx/VBiLBb7dVP74uc88qaOOs1p9X5ZUXc+M5vcf2h271ZAGSALdQj0PQw9AR4kAp3R+7aTJSLEPZtvgzQx24UsOPnXnbreBLmMSyHnKPWrrthTt student@alexlevashov
+        - <id_rsa.pub>
 

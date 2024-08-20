@@ -6,31 +6,83 @@
   become: true
 
 # Docker install
-- name: Docker install
-  shell: "apt update && apt install -y curl && curl https://get.docker.com -o install.sh && sh install.sh"
+#- name: Docker install
+#  shell: "apt update && apt install -y curl && curl https://get.docker.com -o install.sh && sh install.sh"
+#  become: true
+- name: Install prerequisites for Docker
+  apt:
+    name:
+      - curl
+      - apt-transport-https
+    state: present
+    update_cache: yes
   become: true
+
+- name: Download Docker installation script
+  get_url:
+    url: https://get.docker.com
+    dest: /tmp/install-docker.sh
+    mode: '0755'
+  become: true
+
+- name: Run Docker installation script
+  command: /tmp/install-docker.sh
+  become: true
+
 
 # Add user student to run Docker
-- name: Add user "student" to run Docker
-  shell: "chown student:docker /var/run/docker.sock"
+#- name: Add user "student" to run Docker
+#  shell: "chown student:docker /var/run/docker.sock"
+#  become: true
+- name: Add user "student" to the docker group
+  user:
+    name: student
+    groups: docker
+    append: yes
   become: true
 
+
 # Docker remove config
-- name: Docker cremove config
+#- name: Docker cremove config
+#  ansible.builtin.file:
+#    path: /etc/docker/daemon.json
+#    state: absent
+#  become: true
+- name: Remove Docker config
   ansible.builtin.file:
     path: /etc/docker/daemon.json
     state: absent
   become: true
 
+
 # Docker config set mirrors
-- name: Docker config set mirrors
+#- name: Docker config set mirrors
+#  copy:
+#      dest: "/etc/docker/daemon.json"
+#      content: |
+#        {"registry-mirrors": ["https://mirror.gcr.io", "https://daocloud.io", "https://c.163.com/", "https://registry.docker-cn.com"]}
+#  become: true
+- name: Set Docker registry mirrors
   copy:
-      dest: "/etc/docker/daemon.json"
-      content: |
-        {"registry-mirrors": ["https://mirror.gcr.io", "https://daocloud.io", "https://c.163.com/", "https://registry.docker-cn.com"]}
+    dest: "/etc/docker/daemon.json"
+    content: |
+      {
+        "registry-mirrors": [
+          "https://mirror.gcr.io",
+          "https://daocloud.io",
+          "https://c.163.com/",
+          "https://registry.docker-cn.com"
+        ]
+      }
   become: true
 
+
 # Restart Docker on host
+#- name: Restart Docker service
+#  shell: "service docker restart"
+#  become: true
 - name: Restart Docker service
-  shell: "service docker restart"
+  service:
+    name: docker
+    state: restarted
   become: true
